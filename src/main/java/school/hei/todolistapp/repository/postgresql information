@@ -1,0 +1,23 @@
+CREATE TABLE todo (
+                       id SERIAL PRIMARY KEY,
+                       title VARCHAR(255) NOT NULL,
+                       description TEXT,
+                       create_date TIMESTAMP NOT NULL DEFAULT NOW(),
+                       deadline TIMESTAMP,
+                       executionDate TIMESTAMP,
+                       priority VARCHAR(50) CHECK (priority IN ('LOW', 'MEDIUM', 'HIGH')),
+                       status VARCHAR(50) CHECK (status IN ('IN_PROGRESS', 'DONE'))
+);
+
+
+INSERT INTO todo (title, description, create_date, deadline, executionDate, priority, status)
+VALUES
+    ('Acheter des courses', 'Acheter du lait, du pain et des fruits pour la semaine', '2024-09-01 10:30:00', '2024-09-05 18:00:00', NULL, 'MEDIUM', 'DONE'),
+
+    ('Réviser pour l examen', 'Se préparer pour l examen de THEORIE P2', '2024-08-30 08:00:00', '2024-09-10 23:59:00', NULL, 'HIGH', 'IN_PROGRESS'),
+
+    ('Rendez-vous chez le médecin','.....', '2024-08-25 09:15:00', '2024-09-04 09:00:00', '2024-09-04 09:30:00', 'LOW', 'DONE'),
+
+    ('Préparer une présentation', 'Créer une présentation pour le projet de recherche', '2024-09-01 13:45:00', '2024-09-07 14:00:00', '2024-09-06 16:00:00', 'HIGH', 'IN_PROGRESS'),
+
+    ('Envoyer un email', '', '2024-09-03 11:00:00', '2024-09-03 12:00:00', '2024-09-03 11:45:00', 'LOW', 'DONE');
