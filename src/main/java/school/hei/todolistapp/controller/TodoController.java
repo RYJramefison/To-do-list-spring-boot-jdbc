@@ -17,8 +17,6 @@ import java.util.Optional;
 public class TodoController {
     private TodoService todoService;
 
-
-
     @GetMapping("/todos")
     public List<Todo> getALlTodo(){
         return todoService.getAllTodos();
@@ -29,5 +27,14 @@ public class TodoController {
         return  todoService.getTodoById(id);
     }
 
+    @GetMapping("/search")
+    public List<Todo> getTodoByStatus(@RequestParam @MatrixVariable Status status) {
+        return todoService.getTodoByStatus(status);
+    }
 
+    @PostMapping("/todo")
+    public ResponseEntity<Void> createTodo(@RequestBody Todo todo) {
+        todoService.createTodo(todo);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }

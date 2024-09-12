@@ -19,7 +19,30 @@ public class TodoImplement implements TodoDAO {
 
     @Override
     public void save(Todo toAdd) {
+        String sql = "INSERT INTO todo (title, description, create_date, deadline, executionDate, priority, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
+        try (Connection conn = this.connection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, toAdd.getTitle());
+            ps.setString(2, toAdd.getDescription());
+            ps.setObject(3, toAdd.getCreate_date(), java.sql.Types.TIMESTAMP);
+            ps.setObject(4, toAdd.getDeadline(),  java.sql.Types.TIMESTAMP);
+            ps.setObject(5, toAdd.getExecutionDate(),  java.sql.Types.TIMESTAMP);
+            ps.setString(6, toAdd.getPriority().name());
+            ps.setString(7, toAdd.getStatus().name());
+
+            ps.executeUpdate();
+
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    toAdd.setId(generatedKeys.getInt(1));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -85,6 +108,35 @@ public class TodoImplement implements TodoDAO {
         return null;
     }
 
+    public List<Todo> getTodoByStatus(Status status) {
+        List<Todo> todos = new ArrayList<>();
+        String sql = "SELECT * FROM todo WHERE status = ?";
+
+        try (Connection conn = this.connection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, status.name()); // Passez le statut comme chaîne de caractères
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    todos.add(new Todo(
+                            rs.getInt("id"),
+                            rs.getString("title"),
+                            rs.getString("description"),
+                            rs.getObject("create_date", LocalDateTime.class),
+                            rs.getObject("deadline", LocalDateTime.class),
+                            rs.getObject("executionDate", LocalDateTime.class),
+                            Priority.valueOf(rs.getString("priority")),
+                            Status.valueOf(rs.getString("status"))
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return todos;
+    }
 
     @Override
     public void deleteById(int id) {

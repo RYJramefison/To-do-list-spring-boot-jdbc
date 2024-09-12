@@ -30,7 +30,13 @@ public class TodoService {
     public Optional<Todo>  getTodoById(int id){
         return todoDAO.findById(id);
     }
+    public List<Todo> getTodoByStatus(Status status){
+        return todoDAO.getTodoByStatus(status);
+    }
 
+    public void createTodo(Todo todo) {
+        todoDAO.save(todo);
+    }
 
 
 
